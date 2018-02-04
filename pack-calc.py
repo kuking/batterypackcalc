@@ -5,10 +5,10 @@ import operator
 import sys
 from collections import OrderedDict
 
-cfg_S = 4
+cfg_S = 3
 cfg_P = 3
-cfg_min_mah = 200        # don't include in cells with less than X mah
-cfg_delta_mah_happy = 5   # stop optimising when pack has less than X mah among themselves
+cfg_min_mah = 2000         # don't include in cells with less than X mah
+cfg_delta_mah_happy = 25   # stop optimising when pack has less than X mah among themselves
 
 cfg_csv = 'cells.csv'
 cfg_csv_col_no = 0
