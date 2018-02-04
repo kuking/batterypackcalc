@@ -24,24 +24,23 @@ need help.
 
 ```
 
-$ ./pack-calc.py
 Cells in file: 14
 Discarding cells with less than 2000 mah
 Viable cells: 10
-putting 14 of 2444 into 1P 1S
-putting 3 of 2421 into 1P 2S
-putting 4 of 2367 into 1P 3S
-putting 13 of 2300 into 2P 3S
-putting 7 of 2270 into 2P 2S
-putting 1 of 2260 into 2P 1S
-putting 2 of 2200 into 3P 1S
-putting 11 of 2185 into 3P 2S
-putting 12 of 2180 into 3P 3S
-A-B Swapping cell 2 for 12 between pack 1 and pack 3 makes delta 17.0
+putting cell 14 of 2444 mAh into 1P 1S
+putting cell 3 of 2421 mAh into 1P 2S
+putting cell 4 of 2367 mAh into 1P 3S
+putting cell 13 of 2300 mAh into 2P 3S
+putting cell 7 of 2270 mAh into 2P 2S
+putting cell 1 of 2260 mAh into 2P 1S
+putting cell 2 of 2200 mAh into 3P 1S
+putting cell 11 of 2185 mAh into 3P 2S
+putting cell 12 of 2180 mAh into 3P 3S
+A-B Swapping cell 2 for 12 between pack 1 and pack 3 makes delta 17 mAh
 
 Finished:
 ---------
-Biggest delta is 17 between pack 1 and 3
+Biggest delta is 17 mAh between pack 1 and 3
 Pack 1, cells [14, 1, 12]  capacity: 6884 mAh
 Pack 2, cells [3, 7, 11]  capacity: 6876 mAh
 Pack 3, cells [4, 13, 2]  capacity: 6867 mAh

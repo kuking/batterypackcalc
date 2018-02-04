@@ -119,7 +119,7 @@ for p in range(1, cfg_P + 1):
         else:
             this_s = s
 
-        print("putting %i of %i into %iP %iS" % (cell_no, cells[cell_no], p, this_s))
+        print("putting cell %i of %i mAh into %iP %iS" % (cell_no, cells[cell_no], p, this_s))
         groups[this_s].append(cell_no)
 
 
@@ -133,7 +133,7 @@ while max_delta > cfg_delta_mah_happy and something_tried:
     # first, tries to swap between the two packs with most difference
     cell_a, cell_b, delta = find_swap_to_minimize_difference_to(groups[a], groups[b], cells, avg_capacity)
     if cell_a is not None and cell_b is not None:
-        print("A-B Swapping cell", cell_a, "for", cell_b, "between pack", a, "and pack",  b, "makes delta", delta)
+        print("A-B Swapping cell", cell_a, "for", cell_b, "between pack", a, "and pack",  b, "makes delta", int(delta), "mAh")
         groups[a].remove(cell_a)
         groups[b].remove(cell_b)
         groups[b].append(cell_a)
@@ -147,7 +147,7 @@ while max_delta > cfg_delta_mah_happy and something_tried:
         if c != a:
             cell_a, cell_c, delta = find_swap_to_minimize_difference_to(groups[a], groups[c], cells, avg_capacity)
             if cell_a is not None and cell_b is not None:
-                print("C-A Swapping cell", cell_a, "for", cell_c, "between pack", a, "and pack",  c, "makes delta", delta)
+                print("C-A Swapping cell", cell_a, "for", cell_c, "between pack", a, "and pack",  c, "makes delta", int(delta), "mAh")
                 groups[a].remove(cell_a)
                 groups[c].remove(cell_c)
                 groups[a].append(cell_c)
@@ -162,7 +162,7 @@ while max_delta > cfg_delta_mah_happy and something_tried:
         if c != b:
             cell_b, cell_c, delta = find_swap_to_minimize_difference_to(groups[b], groups[c], cells, avg_capacity)
             if cell_a is not None and cell_b is not None:
-                print("C-B Swapping cell", cell_b, "for", cell_c, "between pack", b, "and pack",  c, "makes delta", delta)
+                print("C-B Swapping cell", cell_b, "for", cell_c, "between pack", b, "and pack",  c, "makes delta", int(delta), "mAh")
                 groups[b].remove(cell_b)
                 groups[c].remove(cell_c)
                 groups[b].append(cell_c)
@@ -183,7 +183,7 @@ if max_delta > cfg_delta_mah_happy:
     print("It does not means it does not exist, but i'm a greedy algorithm.")
     print()
 
-print("Biggest delta is %i between pack %i and %i" % (max_delta, a, b))
+print("Biggest delta is %i mAh between pack %i and %i" % (max_delta, a, b))
 for n in range(1, len(groups)):
     print("Pack %i, cells" %n, groups[n], " capacity:", curr_capacities[n], "mAh")
 print("Cells left", groups[0], "unused capacity is", curr_capacities[0], "mAh");
