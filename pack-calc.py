@@ -126,53 +126,23 @@ for p in range(1, cfg_P + 1):
 curr_capacities = capacities(groups, cells)
 avg_capacity = calc_avg_capacity(curr_capacities)
 max_delta, a, b =  calc_max_delta(curr_capacities)
-something_tried = True
-while max_delta > cfg_delta_mah_happy and something_tried:
-    something_tried = False
+something_changed = True
+while max_delta > cfg_delta_mah_happy and something_changed:
+    something_changed = False
 
-    # first, tries to swap between the two packs with most difference
-    cell_a, cell_b, delta = find_swap_to_minimize_difference_to(groups[a], groups[b], cells, avg_capacity)
-    if cell_a is not None and cell_b is not None:
-        print("A-B Swapping cell", cell_a, "for", cell_b, "between pack", a, "and pack",  b, "makes delta", int(delta), "mAh")
-        groups[a].remove(cell_a)
-        groups[b].remove(cell_b)
-        groups[b].append(cell_a)
-        groups[a].append(cell_b)
-        something_tried = True
-        curr_capacities = capacities(groups, cells)
-        avg_capacity = calc_avg_capacity(curr_capacities)
-
-    # then anything against group a (including group 0 which is unnused cells)
-    for c in range(1, len(groups)):
-        if c != a:
-            cell_a, cell_c, delta = find_swap_to_minimize_difference_to(groups[a], groups[c], cells, avg_capacity)
+    for a in range(1, len(groups)):
+        for b in range(a, len(groups)):
+            cell_a, cell_b, delta = find_swap_to_minimize_difference_to(groups[a], groups[b], cells, avg_capacity)
             if cell_a is not None and cell_b is not None:
-                print("C-A Swapping cell", cell_a, "for", cell_c, "between pack", a, "and pack",  c, "makes delta", int(delta), "mAh")
+                print("A-B Swapping cell", cell_a, "for", cell_b, "between pack", a, "and pack",  b, "makes delta", int(delta), "mAh")
                 groups[a].remove(cell_a)
-                groups[c].remove(cell_c)
-                groups[a].append(cell_c)
-                groups[c].append(cell_a)
-                something_tried = True
-                curr_capacities = capacities(groups, cells)
-                avg_capacity = calc_avg_capacity(curr_capacities)
-
-    # then anything against group b (including group 0 which is unnused cells)
-    # I'm not sure if the following is necessary
-    for c in range(1, len(groups)):
-        if c != b:
-            cell_b, cell_c, delta = find_swap_to_minimize_difference_to(groups[b], groups[c], cells, avg_capacity)
-            if cell_a is not None and cell_b is not None:
-                print("C-B Swapping cell", cell_b, "for", cell_c, "between pack", b, "and pack",  c, "makes delta", int(delta), "mAh")
                 groups[b].remove(cell_b)
-                groups[c].remove(cell_c)
-                groups[b].append(cell_c)
-                groups[c].append(cell_b)
-                something_tried = True
+                groups[b].append(cell_a)
+                groups[a].append(cell_b)
                 curr_capacities = capacities(groups, cells)
                 avg_capacity = calc_avg_capacity(curr_capacities)
+                something_changed = True
 
-    curr_capacities = capacities(groups, cells)
-    avg_capacity = calc_avg_capacity(curr_capacities)
     max_delta, a, b = calc_max_delta(curr_capacities)
 
 print()

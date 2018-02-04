@@ -1,20 +1,22 @@
 # Battery Pack Calculator
 Calculates how to distribute cells in a battery pack to reduce capacity difference between parallel packs.
 
-i.e. you have 200 cells and you have measured each one's capacity, you want to build a S4P50 pack, so you need to
-build 4 packs with 50 cells on each. This script will help you to decide which cells to put in each pack, 
-so at the end each pack has a very close capacity.
+i.e. you have 200 cells and know each cell's capacity; you want to build a S4P50 pack, so you need to
+group 4 packs with 50 cells on each. This script will help you to decide which cells to put in each pack, 
+so in the end, all the packs have a very similar capacity.
 
 # Algorithm
 
 Initially spreads the cells from higher to lower capacity following an "S" pattern around the packs.
 
+Then it tries to reduce the mAh difference by swapping cells between packs, if trying a swap, the difference between 
+the twp packs' capacity becomes closer to the average capacity of all the packs, it leaves the cells swapped.
 
-Then it tries to reduce the difference by swapping cells between packs. First  tries to reduce the difference between
-the packs with bigger delta in capacity, then picks them two by two... 
-It will not find the best solution but probably fast enough and good enough for reasonable size pack. I believe
-the perfect solution is NP Complete but given enough cells and given that measuring capacity has a margin of error
-this algorithm should be good enough.
+This does not warranty to find the best solution, but it will probably be fast enough and good enough given a
+non-trivial pack size (i.e. +12 cells).
+ 
+I believe the perfect solution requires NP time to solve; but given enough cells and given the capacity measurements
+have indeed a margin of error; this algorithm is probably good enough.
 
 
 Configuration is almost self explanatory in the first couple of lines with the `cfg_` variables. Contact me if you 
