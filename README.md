@@ -26,9 +26,9 @@ need help.
 
 ```
 
-Cells in file: 14
-Discarding cells with less than 2000 mah
-Viable cells: 10
+Cells in file: 18
+Discarding cells with less than 1900 mah
+Viable cells: 16
 putting cell 14 of 2444 mAh into 1P 1S
 putting cell 3 of 2421 mAh into 1P 2S
 putting cell 4 of 2367 mAh into 1P 3S
@@ -38,15 +38,23 @@ putting cell 1 of 2260 mAh into 2P 1S
 putting cell 2 of 2200 mAh into 3P 1S
 putting cell 11 of 2185 mAh into 3P 2S
 putting cell 12 of 2180 mAh into 3P 3S
-A-B Swapping cell 2 for 12 between pack 1 and pack 3 makes delta 17 mAh
+putting cell 17 of 2178 mAh into 4P 3S
+putting cell 19 of 2150 mAh into 4P 2S
+putting cell 20 of 2133 mAh into 4P 1S
+putting cell 18 of 2095 mAh into 5P 1S
+putting cell 8 of 2053 mAh into 5P 2S
+putting cell 9 of 1993 mAh into 5P 3S
+A-B Swapping cell 14 for 4 between pack 1 and pack 3 makes delta 40 mAh
+A-B Swapping cell 1 for 7 between pack 1 and pack 2 makes delta 18 mAh
+A-B Swapping cell 3 for 14 between pack 2 and pack 3 makes delta 20 mAh
+A-B Swapping cell 20 for 19 between pack 1 and pack 2 makes delta 7 mAh
 
 Finished:
 ---------
-Biggest delta is 17 mAh between pack 1 and 3
-Pack 1, cells [14, 1, 12]  capacity: 6884 mAh
-Pack 2, cells [3, 7, 11]  capacity: 6876 mAh
-Pack 3, cells [4, 13, 2]  capacity: 6867 mAh
-Cells left [8] unused capacity is 2053 mAh
-Biggest difference between packs is 17 mAh between pack 1 and 3.
+Pack 1 with 11082 mAh using cells [2, 18, 4, 7, 19]
+Pack 2 with 11075 mAh using cells [11, 8, 1, 14, 20]
+Pack 3 with 11072 mAh using cells [13, 12, 17, 9, 3]
+Biggest difference is between packs 1 and 3 with 10 mAh (0.09%).
+1 cells left unused [10] ; unused capacity is 1960 mAh.
 
 ```
