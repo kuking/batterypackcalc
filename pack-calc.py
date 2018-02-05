@@ -5,9 +5,9 @@ import operator
 import sys
 from collections import OrderedDict
 
-cfg_S = 3
+cfg_S = 4
 cfg_P = 5
-cfg_min_mah = 1900  # don't include in cells with less than X mah
+cfg_min_mah = 1950  # don't include in cells with less than X mah
 cfg_delta_mah_happy = 25  # stop optimising when pack has less than X mah among themselves
 
 cfg_csv = 'cells.csv'
@@ -65,7 +65,6 @@ def find_swap_to_minimize_difference_to(group_a, group_b, cells, target_mah):
             test_group_a.append(cell_b)
             test_group_b.append(cell_a)
 
-            # print (group_a, test_group_a, "SHOULD BE DIFFERENT")
             test_cap_a = group_capacity(test_group_a, cells)
             test_cap_b = group_capacity(test_group_b, cells)
 
@@ -105,19 +104,18 @@ groups = {0: list(cells.keys())}
 for i in range(1, cfg_S + 1):
     groups[i] = []
 
+print("Initial setup ...")
 # iteration 1, put one on each pack ordered by higher rate to lower rate following an 'S' shape to make it more likeky
 # to be balanced
 
 for p in range(1, cfg_P + 1):
     for s in range(1, cfg_S + 1):
         cell_no = groups[0].pop()
-
         if p % 2 == 0:
             this_s = cfg_S - s + 1
         else:
             this_s = s
-
-        print("putting cell %i of %i mAh into %iP %iS" % (cell_no, cells[cell_no], p, this_s))
+        print("adding cell %i of %i mAh into %ip%is (%iP%iS)" % (cell_no, cells[cell_no], p, this_s, cfg_P, cfg_S))
         groups[this_s].append(cell_no)
 
 curr_capacities = capacities(groups, cells)
@@ -131,9 +129,8 @@ while max_delta > cfg_delta_mah_happy and something_changed:
         for b in range(a, len(groups)):
             cell_a, cell_b, delta = find_swap_to_minimize_difference_to(groups[a], groups[b], cells, avg_capacity)
             if cell_a is not None and cell_b is not None:
-                print(
-                "A-B Swapping cell", cell_a, "for", cell_b, "between pack", a, "and pack", b, "makes delta", int(delta),
-                "mAh")
+                print("A-B Swapping cell", cell_a, "for", cell_b, "between pack", a, "and pack", b,
+                      "makes delta", int(delta), "mAh")
                 groups[a].remove(cell_a)
                 groups[b].remove(cell_b)
                 groups[b].append(cell_a)
@@ -153,7 +150,7 @@ if max_delta > cfg_delta_mah_happy:
     print()
 
 for n in range(1, len(groups)):
-    print("Pack", n, "with", curr_capacities[n], "mAh using cells", groups[n])
+    print("Pack", n, "with", curr_capacities[n], "mAh using cells", sorted(groups[n]))
 
 print ("Biggest difference is between packs %i and %i with %i mAh (%2.2f%%)."
        % (a, b, max_delta, max_delta * 100.0 / curr_capacities[1]))
@@ -161,4 +158,4 @@ print ("Biggest difference is between packs %i and %i with %i mAh (%2.2f%%)."
 if len(groups[0]) == 0:
     print("All the cells used in the packs!")
 else:
-    print(len(groups[0]), "cells left unused", groups[0], "; unused capacity is", curr_capacities[0], "mAh.")
+    print(len(groups[0]), "cells left unused", sorted(groups[0]), "; unused capacity is", curr_capacities[0], "mAh.")
