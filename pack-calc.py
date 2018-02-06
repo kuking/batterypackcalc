@@ -7,8 +7,8 @@ from collections import OrderedDict
 
 cfg_S = 4
 cfg_P = 5
-cfg_min_mah = 1950  # don't include in cells with less than X mah
-cfg_delta_mah_happy = 25  # stop optimising when pack has less than X mah among themselves
+cfg_mah_range = range(1950, 23000)  # only include cells within this range
+cfg_delta_mah_happy = 1             # stop optimising when pack has less than X mah among themselves
 
 cfg_csv = 'cells.csv'
 cfg_csv_col_no = 0
@@ -48,12 +48,14 @@ def calc_max_delta(capacities):
     return max_delta, delta_a, delta_b
 
 
-def find_swap_to_minimize_difference_to(group_a, group_b, cells, target_mah):
+def find_swap_to_min_difference_to(group_a, group_b, cells, target_mah, ignore_first_group):
     cap_a = group_capacity(group_a, cells)
     cap_b = group_capacity(group_b, cells)
-    best_diff = abs(cap_a - target_mah) + abs(cap_b - target_mah)
+    best_delta = abs(cap_b - target_mah)
+    if not ignore_first_group:
+        best_delta = best_delta + abs(cap_a - target_mah)
     best_swap = None, None, 0
-    if best_diff == 0:
+    if best_delta == 0:
         return best_swap
 
     for cell_a in group_a:
@@ -68,11 +70,14 @@ def find_swap_to_minimize_difference_to(group_a, group_b, cells, target_mah):
             test_cap_a = group_capacity(test_group_a, cells)
             test_cap_b = group_capacity(test_group_b, cells)
 
-            test_diff = abs(test_cap_a - target_mah) + abs(test_cap_b - target_mah)
+            test_delta = abs(test_cap_b - target_mah)
+            if not ignore_first_group:
+                test_delta = test_delta + abs(test_cap_a - target_mah)
 
-            if best_diff > test_diff:
-                best_diff = test_diff
-                best_swap = cell_a, cell_b, best_diff
+            if best_delta > test_delta:
+                # print(best_delta, '>', test_delta)
+                best_delta = test_delta
+                best_swap = cell_a, cell_b, best_delta
 
     return best_swap
 
@@ -89,8 +94,8 @@ with open(cfg_csv) as csv_file:
             pass  # blindly assumes some cells to be wrong
 
 print("Cells in file:", len(cells))
-print("Discarding cells with less than %i mah" % cfg_min_mah)
-cells = dict((k, v) for k, v in cells.items() if v > cfg_min_mah)
+print("Discarding cells not within", cfg_mah_range, "mAh.")
+cells = dict((k, v) for k, v in cells.items() if v in cfg_mah_range)
 print("Viable cells:", len(cells))
 
 if len(cells) < cfg_S * cfg_P:
@@ -104,7 +109,7 @@ groups = {0: list(cells.keys())}
 for i in range(1, cfg_S + 1):
     groups[i] = []
 
-print("Initial setup ...")
+print("Initial placements ...")
 # iteration 1, put one on each pack ordered by higher rate to lower rate following an 'S' shape to make it more likeky
 # to be balanced
 
@@ -124,22 +129,23 @@ max_delta, a, b = calc_max_delta(curr_capacities)
 something_changed = True
 while max_delta > cfg_delta_mah_happy and something_changed:
     something_changed = False
-
-    for a in range(1, len(groups)):
-        for b in range(a, len(groups)):
-            cell_a, cell_b, delta = find_swap_to_minimize_difference_to(groups[a], groups[b], cells, avg_capacity)
+    for a in range(0, len(groups)):
+        for b in range(a+1, len(groups)):
+            cell_a, cell_b, delta = find_swap_to_min_difference_to(groups[a], groups[b], cells, avg_capacity, a == 0)
             if cell_a is not None and cell_b is not None:
-                print("A-B Swapping cell", cell_a, "for", cell_b, "between pack", a, "and pack", b,
-                      "makes delta", int(delta), "mAh")
                 groups[a].remove(cell_a)
                 groups[b].remove(cell_b)
                 groups[b].append(cell_a)
                 groups[a].append(cell_b)
                 curr_capacities = capacities(groups, cells)
                 avg_capacity = calc_avg_capacity(curr_capacities)
+                old_max_delta = max_delta
+                max_delta, a, b = calc_max_delta(curr_capacities)
                 something_changed = True
+                print("A-B Swapping cell", cell_a, "for", cell_b, "between pack", a, "and", b,
+                      "made the pack differ from the total avg by", int(delta), "mAh.",
+                      "Prev max diff between packs was", old_max_delta, "mAh, now is", max_delta, "mAh.")
 
-    max_delta, a, b = calc_max_delta(curr_capacities)
 
 print()
 print("Finished:")
@@ -151,9 +157,14 @@ if max_delta > cfg_delta_mah_happy:
 
 for n in range(1, len(groups)):
     print("Pack", n, "with", curr_capacities[n], "mAh using cells", sorted(groups[n]))
+print()
 
-print ("Biggest difference is between packs %i and %i with %i mAh (%2.2f%%)."
-       % (a, b, max_delta, max_delta * 100.0 / curr_capacities[1]))
+if max_delta == 0:
+    print ("Perfect fit! All the packs are of the same size!")
+    print ("-> Still we aware that measuring cells capacity is not a perfect science.")
+else:
+    print ("Biggest difference is between packs %i and %i with %i mAh (%2.2f%%)."
+            % (a, b, max_delta, max_delta * 100.0 / curr_capacities[1]))
 
 if len(groups[0]) == 0:
     print("All the cells used in the packs!")
