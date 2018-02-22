@@ -160,7 +160,7 @@ for n in range(1, len(groups)):
 print()
 
 pack_capacity = sum(curr_capacities.values()) - curr_capacities[0]
-print("Total capacity:", pack_capacity, "mAh (%2.2d" % (pack_capacity * 3.7 / 1000.0), "KWh w/3.7V cells)")
+print("Total capacity:", pack_capacity, "mAh (%2.2d" % (pack_capacity * 3.7 / 1000.0), "Wh w/3.7V cells)")
 
 if max_delta == 0:
     print ("Perfect fit! All the packs are of the same size!")
