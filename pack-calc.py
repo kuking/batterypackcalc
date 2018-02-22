@@ -5,9 +5,9 @@ import operator
 import sys
 from collections import OrderedDict
 
-cfg_S = 4
-cfg_P = 5
-cfg_mah_range = range(1950, 23000)  # only include cells within this range
+cfg_S = 5
+cfg_P = 7
+cfg_mah_range = range(1950, 2300)  # only include cells within this range
 cfg_delta_mah_happy = 1             # stop optimising when pack has less than X mah among themselves
 
 cfg_csv = 'cells.csv'
@@ -158,6 +158,9 @@ if max_delta > cfg_delta_mah_happy:
 for n in range(1, len(groups)):
     print("Pack", n, "with", curr_capacities[n], "mAh using cells", sorted(groups[n]))
 print()
+
+pack_capacity = sum(curr_capacities.values()) - curr_capacities[0]
+print("Total capacity:", pack_capacity, "mAh (%2.2d" % (pack_capacity * 3.7 / 1000.0), "KWh w/3.7V cells)")
 
 if max_delta == 0:
     print ("Perfect fit! All the packs are of the same size!")
